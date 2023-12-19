@@ -9,9 +9,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/fox-one/mixin-sdk-go/v2"
 	"github.com/fox-one/mixin-sdk-go/v2/mixinnet"
+	"github.com/manifoldco/promptui"
 	"github.com/shopspring/decimal"
 	"github.com/spf13/cast"
 )
@@ -57,7 +59,10 @@ func main() {
 		log.Fatalln("receiver is self")
 	}
 
-	log.Printf("receiver is %s, group = %d", receiver.FullName, *spendGroupCount)
+	log.Printf("migrate assets to %s(%s)", receiver.FullName, receiver.UserID)
+	if !conformContinue() {
+		return
+	}
 
 	r := &runner{
 		client:   client,
@@ -326,4 +331,17 @@ func fetchUserInfo(ctx context.Context, id string) (*mixin.User, error) {
 	}
 
 	return &body.Data, nil
+}
+
+func conformContinue() bool {
+	prompt := promptui.Prompt{
+		Label:     "Continue",
+		IsConfirm: true,
+	}
+	result, err := prompt.Run()
+	if err != nil {
+		return false
+	}
+
+	return strings.EqualFold(result, "y")
 }
