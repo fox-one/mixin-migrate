@@ -1,5 +1,7 @@
 # mixin-migrate
 
+migrate assets from mixin legacy network to safe network
+
 ## install
 
 ```bash
