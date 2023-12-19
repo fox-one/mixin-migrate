@@ -1,0 +1,28 @@
+name: build
+
+on:
+  push: 
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: stable
+
+      - name: go test
+        run: go test ./...
+
+      - uses: goreleaser/goreleaser-action@v5
+        with:
+          version: latest
+          args: build --snapshot --clean
